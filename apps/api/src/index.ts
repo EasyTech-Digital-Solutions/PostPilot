@@ -1,5 +1,6 @@
 import { env } from "./env";
 import express from "express";
+import "express-async-errors";
 import cors from "cors";
 import { authRouter } from "./routes/auth";
 import { metaAuthRouter } from "./routes/metaAuth";

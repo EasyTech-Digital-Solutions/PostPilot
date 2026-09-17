@@ -167,6 +167,8 @@ export class MetaGraphClient {
       );
     }
 
+    await this.waitForVideoReady(start.video_id, pageAccessToken);
+
     await graphFetch(
       `/${pageId}/video_reels`,
       {
@@ -220,6 +222,34 @@ export class MetaGraphClient {
       `/${igUserId}/media_publish`,
       { creation_id: container.id, access_token: accessToken },
       "POST"
+    );
+  }
+
+  /** Polls a Facebook video (including a Reel's hosted-file upload) until Meta finishes processing it. */
+  private async waitForVideoReady(
+    videoId: string,
+    accessToken: string,
+    { maxAttempts = 20, delayMs = 3000 } = {}
+  ): Promise<void> {
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const result = await graphFetch<{ status: { video_status: string } }>(`/${videoId}`, {
+        fields: "status",
+        access_token: accessToken,
+      });
+
+      const videoStatus = result.status?.video_status;
+      if (videoStatus === "ready") return;
+      if (videoStatus === "error") {
+        throw new MetaGraphApiError("Facebook video failed to process", 502, result);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    throw new MetaGraphApiError(
+      "Timed out waiting for Facebook video to finish processing",
+      504,
+      { videoId }
     );
   }
 
