@@ -2,6 +2,10 @@
 # routing through Caddy (which needs a real domain + port 80/443 for TLS).
 # Picked up automatically by `docker compose` alongside docker-compose.yml.
 services:
+  postgres:
+    ports:
+      - "5432:5432"
+
   api:
     ports:
       - "4000:4000"

@@ -13,7 +13,9 @@
     "build": "npm run build --workspaces --if-present",
     "db:generate": "npm run generate --workspace=packages/db",
     "db:migrate": "npm run migrate --workspace=packages/db",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:db:setup": "bash scripts/setup-test-db.sh"
   },
   "engines": {
     "node": ">=20"
@@ -24,5 +26,8 @@
     "esbuild@0.28.1": true,
     "msgpackr-extract@3.0.4": true,
     "prisma@5.22.0": true
+  },
+  "devDependencies": {
+    "vitest": "^4.1.11"
   }
 }
